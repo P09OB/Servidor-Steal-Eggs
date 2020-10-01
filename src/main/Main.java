@@ -10,6 +10,8 @@ public class Main extends PApplet {
 	perfil1,perfil2,botonJugar3,ganadorImg,intentarImg,salirImg,perfilG1,perfilG2,empateImg,homeImg;
 	
 	int pantalla, next;
+	
+	TcpSingleton tcp;
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
@@ -27,6 +29,9 @@ public class Main extends PApplet {
 	public void setup() {
 		
 		cargarImagenes();
+		tcp = TcpSingleton.getInstance();
+		tcp.setObservador(this);
+		
 		
 		
 	}
@@ -41,6 +46,8 @@ public class Main extends PApplet {
 			
 
 			image(intro,0,0);
+			
+			
 			
 			if((mouseX >= 440 && mouseX <= 732) &&(mouseY >= 393 && mouseY <= 455)) {
 				image(botonJugar,0,0);
@@ -182,7 +189,7 @@ public class Main extends PApplet {
 		//ZONAS SENSIBLES INICIO
 		
 		case 0:
-			
+			tcp.enviar("desde servidor");
 			if((mouseX >= 440 && mouseX <= 732) &&(mouseY >= 393 && mouseY <= 455)) {
 				pantalla = 1;
 			}
@@ -340,6 +347,15 @@ public class Main extends PApplet {
 			image(botonAtras,0,0);
 
 		}
+		
+		
+	}
+
+	public void recibirMensaje(String mensaje) {
+		// TODO Auto-generated method stub
+		
+		System.out.println("Recibido"+ mensaje);
+		
 		
 		
 	}
