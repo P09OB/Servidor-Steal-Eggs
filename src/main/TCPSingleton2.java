@@ -10,18 +10,18 @@ import java.io.OutputStreamWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-public class TcpSingleton extends Thread{
+public class TCPSingleton2 extends Thread{
 	
-	private static TcpSingleton instancia;
+	private static TCPSingleton2 instancia;
 	
 	//Colocamos privado el constructor para que otras clases no pueden instanciar de el.
-	private TcpSingleton() {}
+	private TCPSingleton2() {}
 	
-	public static TcpSingleton getInstance() {
+	public static TCPSingleton2 getInstance() {
 		
 		if(instancia == null) {
 			
-			instancia = new TcpSingleton();
+			instancia = new TCPSingleton2();
 			instancia.start();
 		}
 		
@@ -32,7 +32,7 @@ public class TcpSingleton extends Thread{
 	private BufferedWriter writer;
 	private Socket socket;
 	private onMessageListener observador;
-	private boolean jug1 = false;
+	private boolean jug2 = false;
 	
 	//Metodo de suscripcion
 	public void setObservador(onMessageListener observador) {
@@ -48,11 +48,12 @@ public class TcpSingleton extends Thread{
 		try {
 			
 			//Conexion
-			System.out.println("Esperando Conexion....");
-			ServerSocket server = new ServerSocket(5000);
+		
+			System.out.println("Esperando Conexion2....");
+			ServerSocket server = new ServerSocket(4000);
 			socket = server.accept();
-			jug1 = true;
-			System.out.println("Conectado"); 
+			jug2=true;
+			System.out.println("Conectado2"); 
 			
 			//Declaraciones 
 			
@@ -100,11 +101,11 @@ public class TcpSingleton extends Thread{
 		
 	}
 
-	public boolean getJug1() {
-		return jug1;
+	public boolean getJug2() {
+		return jug2;
 	}
 
-	
+
 	
 	
 	

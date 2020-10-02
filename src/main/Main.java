@@ -1,9 +1,12 @@
 package main;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+
 import processing.core.PApplet;
 import processing.core.PImage;
 
-public class Main extends PApplet {
+public class Main extends PApplet implements onMessageListener {
 	
 	PImage intro,instrucciones,instru2,instru3,instru4,botonJugar2,
 	botonSigui,botonJugar,botonInstru, botonAtras, escenario,conectarimg,
@@ -12,7 +15,12 @@ public class Main extends PApplet {
 	int pantalla, next;
 	
 	TcpSingleton tcp;
-
+	TCPSingleton2 tcp2;
+	InetAddress inetAddress;
+	String ip;
+	String codigo;
+	
+	
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		
@@ -29,15 +37,43 @@ public class Main extends PApplet {
 	public void setup() {
 		
 		cargarImagenes();
+		
 		tcp = TcpSingleton.getInstance();
 		tcp.setObservador(this);
 		
+		tcp2 = TCPSingleton2.getInstance();
+		tcp2.setObservador(this);
 		
 		
+		
+		
+		
+		
+		// OBTENER EL IP 
+		
+		try {
+			inetAddress = InetAddress.getLocalHost();
+		} catch (UnknownHostException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}  
+        
+	    ip = inetAddress.getHostAddress(); 
+	    
+       System.out.println (ip);  
+       
+       String[] parts = ip.split("\\.");
+       
+       codigo = parts[3];
+		
+      
+      
 	}
 	
 	public void draw() {
 		
+		
+		 
 		switch(pantalla) {
 		
 		// INICIO
@@ -60,8 +96,26 @@ public class Main extends PApplet {
 		case 1:
 			
 			image(conectarimg,0,0);
-			image(perfil1,270,286);
-			image(perfil2,750,286);
+			
+			if(tcp.getJug1()==true) {
+				
+				image(perfil1,270,286);
+				text("Conectado",269,542);
+			} else {
+				text("Esperando...",269,542);
+				
+			}
+			
+			
+			if(tcp2.getJug2() == true) {
+				
+				image(perfil2,750,286);
+				text("Conectado",738,542);
+			} else {
+				text("Esperando...",738,542);
+			}
+			
+			
 			image(botonJugar3,483,606);
 			if((mouseX >= 483 && mouseX <= 688) &&(mouseY >= 606 && mouseY <= 667 )) {
 				image(botonJugar2,450,568);
@@ -69,6 +123,9 @@ public class Main extends PApplet {
 			
 			
 			zonaVolver();
+			
+			textSize(20);
+			text(""+ codigo,486,182);
 			
 			break;
 			
@@ -189,7 +246,7 @@ public class Main extends PApplet {
 		//ZONAS SENSIBLES INICIO
 		
 		case 0:
-			tcp.enviar("desde servidor");
+			
 			if((mouseX >= 440 && mouseX <= 732) &&(mouseY >= 393 && mouseY <= 455)) {
 				pantalla = 1;
 			}
@@ -208,11 +265,18 @@ public class Main extends PApplet {
 
 			}
 			
+			if(tcp.getJug1() == true && tcp2.getJug2() == true) {
+				
 			if((mouseX >= 483 && mouseX <= 688) &&(mouseY >= 606 && mouseY <= 667 )) {
 	    		   
 	    		   pantalla = 2;
 	    	}
+			
+			} else {
 				
+				tcp.enviar("Falta un jugador");
+				
+			}
 			
 			
 			
