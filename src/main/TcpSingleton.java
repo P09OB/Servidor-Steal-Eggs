@@ -10,6 +10,8 @@ import java.io.OutputStreamWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 
+import model.Coordenadas;
+
 public class TcpSingleton extends Thread{
 	
 	private static TcpSingleton instancia;
@@ -33,6 +35,7 @@ public class TcpSingleton extends Thread{
 	private Socket socket;
 	private onMessageListener observador;
 	private boolean jug1 = false;
+	private Coordenadas cordenada;
 	
 	//Metodo de suscripcion
 	public void setObservador(onMessageListener observador) {
@@ -67,7 +70,7 @@ public class TcpSingleton extends Thread{
 			while(true) {
 				
 				String mensaje = reader.readLine();
-				observador.recibirMensaje(mensaje);
+				observador.recibirMensaje1(mensaje);
 
 			}
 			

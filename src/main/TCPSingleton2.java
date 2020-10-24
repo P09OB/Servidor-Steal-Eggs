@@ -68,7 +68,7 @@ public class TCPSingleton2 extends Thread{
 			while(true) {
 				
 				String mensaje = reader.readLine();
-				observador.recibirMensaje(mensaje);
+				observador.recibirMensaje2(mensaje);
 
 			}
 			
