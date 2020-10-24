@@ -24,13 +24,17 @@ public class Main extends PApplet implements onMessageListener {
 	private InetAddress inetAddress;
 	private Coordenadas coordenada;
 
-	private int pantalla, next;
+	private int pantalla, next, ganador;
+	
 	private String ip;
 	private String codigo;
+	
 	private int posx, posX = 870;
+	
 	int startTime;
 	int time = 60;
-	private boolean dir = false, dir2 = false;
+	
+	private boolean dir = false, dir2 = false, jump = false;
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
@@ -46,38 +50,8 @@ public class Main extends PApplet implements onMessageListener {
 	}
 
 	public void setup() {
-
-		intro = loadImage("img/inicio.jpg");
-		botonJugar = loadImage("img/botonJugar.png");
-		botonInstru = loadImage("img/botonInstru.png");
-		instrucciones = loadImage("img/instrucciones.jpg");
-		instru2 = loadImage("img/instru2.jpg");
-		instru3 = loadImage("img/instru3.jpg");
-		instru4 = loadImage("img/instru4.jpg");
-		botonSigui = loadImage("img/botonSiguiente.png");
-		botonJugar2 = loadImage("img/botonJugar1.png");
-		botonAtras = loadImage("img/arrow.png");
-		escenario = loadImage("img/Escenario.jpg");
-		conectarimg = loadImage("img/conexion.jpg");
-		perfil1 = loadImage("img/perfilpng.png");
-		perfil2 = loadImage("img/perfil2.png");
-		botonJugar3 = loadImage("img/botonJugar2.png");
-		ganadorImg = loadImage("img/PantallaGanador.jpg");
-		intentarImg = loadImage("img/tryAgainButton.png");
-		salirImg = loadImage("img/exitButton.png");
-		perfilG1 = loadImage("img/perfilGrande.png");
-		perfilG2 = loadImage("img/perfilGrande2.png");
-		empateImg = loadImage("img/empate.jpg");
-		homeImg = loadImage("img/iconoHome.png");
-		j1left = loadImage("img/J1Left.png");
-		j2left = loadImage("img/J2Left.png");
-		j1right = loadImage("img/J1Right.png");
-		j2right = loadImage("img/J2Right.png");
-		j1Jumping = loadImage("img/J1Jumping.png");
-		j2jumping = loadImage("img/J2Jumping.png");
-		egg = loadImage("img/egg.png");
 		
-
+		cargarImagenes();
 
 		game = new Game();
 
@@ -170,7 +144,7 @@ public class Main extends PApplet implements onMessageListener {
 		case 2:
 			image(escenario, 0, 0);
 
-			// TIME
+			// TIEMPO
 
 			int elapsedtime = millis() - startTime;
 			int interval = 1000;
@@ -195,6 +169,8 @@ public class Main extends PApplet implements onMessageListener {
 
 			fill(0);
 			text("" + time, 288, 41);
+			
+			// ENVIA ESTADO DEL JUEGO
 
 			Gson gson = new Gson();
 			String id = UUID.randomUUID().toString();
@@ -203,6 +179,9 @@ public class Main extends PApplet implements onMessageListener {
 
 			tcp.enviar(json);
 			tcp2.enviar(json);
+			
+			
+			// PINTAR ELEMENTOS
 
 			//drawBaskets();
 			drawPlayers();
@@ -210,26 +189,41 @@ public class Main extends PApplet implements onMessageListener {
 			drawScores();
 
 			break;
-		// GANADOR
+			
+			
+		// PANTALLA GANADOR
 		case 3:
+			
+			drawScores();
+			
+			image(ganadorImg, 0, 0);
 
-			boolean ganador = true;
-
-			if (ganador == true) {
-
-				image(ganadorImg, 0, 0);
-
-				// Se cambia por la imagen del ganador
-				image(perfilG1, 449, 169);
-				image(perfilG2, 449, 169);
-
-			}
-
-			if (ganador != true) {
-
+			switch(ganador) {
+			
+			case 0:
+				
 				image(empateImg, 0, 0);
-
+				
+				break;
+				
+				
+			case 1:
+				
+				image(perfilG1, 449, 169);
+				
+				break;
+				
+				
+			case 2:
+				
+				image(perfilG2, 449, 169);
+				
+				
+				break;
+			
 			}
+
+			
 
 			if ((mouseX >= 1090 && mouseX <= 1153) && (mouseY >= 20 && mouseY <= 92)) {
 				image(homeImg, 1090, 20);
@@ -433,10 +427,7 @@ public class Main extends PApplet implements onMessageListener {
 
 	}
 
-	public void cargarImagenes() {
 
-		
-	}
 
 	public void zonaVolver() {
 
@@ -474,7 +465,14 @@ public class Main extends PApplet implements onMessageListener {
 			
 		}
 		
+        if(jump == true) {
+			
+			game.getPlayer1().setJumping(true);
+			image(j1Jumping,p1.getPosX(),p1.getPosY());
+			
 		
+        }
+        
 		if(dir2 == false) {
 			
 			image(j2right,p2.getPosX(),p2.getPosY());
@@ -486,6 +484,9 @@ public class Main extends PApplet implements onMessageListener {
 		}
 		
 		
+		
+		
+		
 
 	}
 
@@ -494,6 +495,27 @@ public class Main extends PApplet implements onMessageListener {
 		fill(0);
 		text(game.getPlayer1().getScore(), 959, 41);
 		text(game.getPlayer2().getScore(), 1081, 41);
+		
+		if(pantalla == 3) {
+			
+			text(game.getPlayer1().getScore(), 959, 41);
+			text(game.getPlayer2().getScore(), 1081, 41);
+
+		if(game.getPlayer1().getScore() > game.getPlayer2().getScore()) {
+			
+			ganador = 1;
+			
+		} if(game.getPlayer1().getScore() == game.getPlayer2().getScore()) {
+			
+			ganador = 0;
+			
+		} if(game.getPlayer1().getScore() < game.getPlayer2().getScore()) {
+			
+			ganador = 2;
+			
+		}
+		
+		}
 
 	}
 
@@ -501,16 +523,14 @@ public class Main extends PApplet implements onMessageListener {
 		fill(0);
 		Egg e = game.getE();
 		image(egg,e.getPosX(), e.getPosY());
-		//ellipse(e.getPosX(), e.getPosY(), 30, 30);
 	}
 
-	public void start() {
-
-	}
 
 	public void resetGame() {
 		time = 60;
 	}
+	
+	//MENSAJES JUGADOR 1
 
 	@Override
 	public void recibirMensaje1(String mensaje) {
@@ -520,14 +540,20 @@ public class Main extends PApplet implements onMessageListener {
 
 			Gson gson = new Gson();
 			Coordenadas coordenada = gson.fromJson(mensaje, Coordenadas.class);
-			// System.out.println(""+coordenada.getX());
+			
 
 			posx = coordenada.getX();
 			dir = coordenada.isDir();
+			jump = coordenada.isJump();
+			
+			System.out.println(""+jump);
+			
 			
 
 		}
 	}
+	
+	//MENSAJES JUGADOR 2
 
 	@Override
 	public void recibirMensaje2(String mensaje) {
@@ -537,15 +563,46 @@ public class Main extends PApplet implements onMessageListener {
 
 			Gson gson = new Gson();
 			Coordenadas coordenada2 = gson.fromJson(mensaje, Coordenadas.class);
-			System.out.println("" + coordenada2.getX());
 
 			posX = coordenada2.getX();
 			dir2 = coordenada2.isDir();
 
-			System.out.println(posX);
 
 		}
 
+	}
+	
+	public void cargarImagenes() {
+
+		intro = loadImage("img/inicio.jpg");
+		botonJugar = loadImage("img/botonJugar.png");
+		botonInstru = loadImage("img/botonInstru.png");
+		instrucciones = loadImage("img/instrucciones.jpg");
+		instru2 = loadImage("img/instru2.jpg");
+		instru3 = loadImage("img/instru3.jpg");
+		instru4 = loadImage("img/instru4.jpg");
+		botonSigui = loadImage("img/botonSiguiente.png");
+		botonJugar2 = loadImage("img/botonJugar1.png");
+		botonAtras = loadImage("img/arrow.png");
+		escenario = loadImage("img/Escenario.jpg");
+		conectarimg = loadImage("img/conexion.jpg");
+		perfil1 = loadImage("img/perfilpng.png");
+		perfil2 = loadImage("img/perfil2.png");
+		botonJugar3 = loadImage("img/botonJugar2.png");
+		ganadorImg = loadImage("img/PantallaGanador.jpg");
+		intentarImg = loadImage("img/tryAgainButton.png");
+		salirImg = loadImage("img/exitButton.png");
+		perfilG1 = loadImage("img/perfilGrande.png");
+		perfilG2 = loadImage("img/perfilGrande2.png");
+		empateImg = loadImage("img/empate.jpg");
+		homeImg = loadImage("img/iconoHome.png");
+		j1left = loadImage("img/J1Left.png");
+		j2left = loadImage("img/J2Left.png");
+		j1right = loadImage("img/J1Right.png");
+		j2right = loadImage("img/J2Right.png");
+		j1Jumping = loadImage("img/J1Jumping.png");
+		j2jumping = loadImage("img/J2Jumping.png");
+		egg = loadImage("img/egg.png");
 	}
 
 }
