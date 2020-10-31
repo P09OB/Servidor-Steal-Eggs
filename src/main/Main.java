@@ -2,6 +2,7 @@ package main;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
 import java.util.UUID;
 
 import com.google.gson.Gson;
@@ -17,13 +18,12 @@ public class Main extends PApplet implements onMessageListener {
 
 	PImage intro, instrucciones, instru2, instru3, instru4, botonJugar2, botonSigui, botonJugar, botonInstru,
 			botonAtras, escenario, conectarimg, perfil1, perfil2, botonJugar3, ganadorImg, intentarImg, salirImg,
-			perfilG1, perfilG2, empateImg, homeImg, j1left, j1right, j1Jumping, j2left,j2right,j2jumping,egg;
+			perfilG1, perfilG2, empateImg, homeImg, j1left, j1right, j1Jumping, j2left,j2right,j2jumping,egg, huevoArbol;
 
 	private TcpSingleton tcp;
 	private TCPSingleton2 tcp2;
 	private InetAddress inetAddress;
 	private Coordenadas coordenada;
-
 	private int pantalla, next, ganador;
 	
 	private String ip;
@@ -34,7 +34,7 @@ public class Main extends PApplet implements onMessageListener {
 	int startTime;
 	int time = 60;
 	
-	private boolean dir = false, dir2 = false, jump = false;
+	private boolean dirLeft = false, dirRight = true, dirLeft2 = true, dirRight2 = false, dir2 = false, jump = false, jump2 = false, steal= false, steal2= false, finish = false;
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
@@ -165,8 +165,10 @@ public class Main extends PApplet implements onMessageListener {
 
 				} else {
 					pantalla = 3;
+					finish = true;
 				}
 			}
+			
 
 			fill(0);
 			text("" + time, 288, 41);
@@ -175,7 +177,7 @@ public class Main extends PApplet implements onMessageListener {
 
 			Gson gson = new Gson();
 			String id = UUID.randomUUID().toString();
-			GameState gameState = new GameState(game.getPlayer1().getScore(), game.getPlayer2().getScore(), time, id);
+			GameState gameState = new GameState(game.getPlayer1().getScore(), game.getPlayer2().getScore(), time,finish, id);
 			String json = gson.toJson(gameState);
 
 			tcp.enviar(json);
@@ -188,6 +190,23 @@ public class Main extends PApplet implements onMessageListener {
 			drawPlayers();
 			drawEgg();
 			drawScores();
+			
+			int score1 = game.getPlayer1().getScore();
+			int score2 = game.getPlayer2().getScore();
+			
+			for(int i = 0; i < score1; i++) {
+				
+				int x = 57*i+2;
+				image(huevoArbol, x,234);
+				
+			}
+			
+            for(int i = 0; i < score2; i++) {
+				
+				int x = 950*i+2;
+				image(huevoArbol, x,234);
+				
+			}
 
 			break;
 			
@@ -357,9 +376,13 @@ public class Main extends PApplet implements onMessageListener {
 
 			if ((mouseX >= 1090 && mouseX <= 1153) && (mouseY >= 20 && mouseY <= 92)) {
 				pantalla = 0;
+				resetGame();
+
 			}
 			if ((mouseX >= 320 && mouseX <= 579) && (mouseY >= 580 && mouseY <= 642)) {
 				pantalla = 1;
+				resetGame();
+				
 			}
 
 			if ((mouseX >= 610 && mouseX <= 871) && (mouseY >= 580 && mouseY <= 642)) {
@@ -454,45 +477,88 @@ public class Main extends PApplet implements onMessageListener {
 		p1.setPosX(posx);
 
 		p2.setPosX(posX);
+		
+		//JUGADOR 1
+		
+         if(jump == true) {
+        	
+        	dirRight = false;
+        	dirLeft = false;
+
+			game.getPlayer1().setJumping(true);
+			image(j1Jumping,p1.getPosX(),p1.getPosY());
+		
+			dirLeft = true;
+			jump = false;
+			
+				
+        }
 
 		
-		if(dir == false) {
-			
+		if(dirRight == true) {
+			game.getPlayer1().setDir(Player.RIGHT);
 			image(j1right,p1.getPosX(),p1.getPosY());
 			
-		} if(dir == true) {
-			
+		} if(dirLeft == true) {
+			game.getPlayer1().setDir(Player.LEFT);
 			image(j1left,p1.getPosX(),p1.getPosY());
 			
 		}
 		
-        if(jump == true) {
-			
-			game.getPlayer1().setJumping(true);
-			image(j1Jumping,p1.getPosX(),p1.getPosY());
-			jump = false;
-			
-		
-        }
         
-		if(dir2 == false) {
-			
-			image(j2right,p2.getPosX(),p2.getPosY());
-			
-		} if(dir2 == true) {
-			
-			image(j2left,p2.getPosX(),p2.getPosY());
-			
-		}
-		
-		
-		
-		
-		
+        
+        
+         if(steal == true) {
+        	 
+        	 game.getPlayer1().setSteal(true);
+        	 
+        	 steal = false;
+         }
+         
+       //JUGADOR 2
+         
+         if(jump2 == true) {
+         	
+         	dirRight2 = false;
+         	dirLeft2 = false;
+
+ 			game.getPlayer2().setJumping(true);
+ 			image(j2jumping,p2.getPosX(),p2.getPosY());
+ 		
+ 			dirLeft2 = true;
+ 			jump2 = false;
+ 			
+ 				
+         }
+         
+         if(dirRight2 == true) {
+ 			
+ 			dirLeft2 = false;
+ 			game.getPlayer2().setDir(Player.RIGHT);
+ 			image(j2right,p2.getPosX(),p2.getPosY());
+ 			
+ 		} if(dirLeft2 == true) {
+ 			
+ 			dirRight2 = false;
+ 			game.getPlayer2().setDir(Player.LEFT);
+ 			image(j2left,p2.getPosX(),p2.getPosY());
+ 			
+ 			
+ 		}
+
+         
+          if(steal2 == true) {
+         	 
+         	 game.getPlayer2().setSteal(true);
+         	 
+         	 steal2 = false;
+          }
+     
 
 	}
 
 	public void drawScores() {
+		
 		textSize(20);
 		fill(0);
 		text(game.getPlayer1().getScore(), 959, 41);
@@ -529,7 +595,18 @@ public class Main extends PApplet implements onMessageListener {
 
 
 	public void resetGame() {
+		pantalla = 2;
 		time = 60;
+		posX = 870;
+		posx=0;
+		game.getPlayer1().setScore(0);
+		game.getPlayer2().setScore(0);
+   	    game.getPlayer1().setSteal(false);
+   	    game.getPlayer2().setSteal(false);
+
+
+
+		
 	}
 	
 	//MENSAJES JUGADOR 1
@@ -545,12 +622,16 @@ public class Main extends PApplet implements onMessageListener {
 			
 
 			posx = coordenada.getX();
-			dir = coordenada.isDir();
+			dirLeft = coordenada.isDirLeft();
+			dirRight = coordenada.isDirRight();
 			jump = coordenada.isJump();
+			steal = coordenada.isSteal();
 			
-			System.out.println(""+jump);
 			
-			
+			if(mensaje.equals("terminar")){
+				resetGame();
+			}
+	
 
 		}
 	}
@@ -567,10 +648,16 @@ public class Main extends PApplet implements onMessageListener {
 			Coordenadas coordenada2 = gson.fromJson(mensaje, Coordenadas.class);
 
 			posX = coordenada2.getX();
-			dir2 = coordenada2.isDir();
-			
+            dirLeft2 = coordenada2.isDirLeft();
+			dirRight2 = coordenada2.isDirRight();
+			jump2 = coordenada2.isJump();
+			steal2 = coordenada2.isSteal();
 
 
+		}
+		
+		if(mensaje.equals("terminar")){
+			resetGame();
 		}
 
 	}
@@ -606,6 +693,7 @@ public class Main extends PApplet implements onMessageListener {
 		j1Jumping = loadImage("img/J1Jumping.png");
 		j2jumping = loadImage("img/J2Jumping.png");
 		egg = loadImage("img/egg.png");
+		huevoArbol = loadImage("img/huevoarbol.png");
 	}
 
 }
