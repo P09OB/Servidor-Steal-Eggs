@@ -12,17 +12,25 @@ public class Game {
 	private PlayerThread thread2;
 	private Egg e;
 	private EggThread eggThread;
+	private boolean started;
 	
 	public Game() {
 		e = new Egg(500, 10);
 		eggThread = new EggThread(e);
-		eggThread.start();
 		player1 = new Player(50, 450,e);
 		player2 = new Player(870, 450,e);
 		thread1 = new PlayerThread(player1);
-		thread1.start();
 		thread2 = new PlayerThread(player2);
-		thread2.start();
+	}
+	
+	public void startThreads() {
+		if(!started) {
+			eggThread.start();
+			thread1.start();
+			thread2.start();
+			started=true;
+		}
+		
 	}
 
 	public Player getPlayer1() {

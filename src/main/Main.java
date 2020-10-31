@@ -142,6 +142,7 @@ public class Main extends PApplet implements onMessageListener {
 
 		// JUEGO
 		case 2:
+			game.startThreads();
 			image(escenario, 0, 0);
 
 			// TIEMPO
@@ -469,6 +470,7 @@ public class Main extends PApplet implements onMessageListener {
 			
 			game.getPlayer1().setJumping(true);
 			image(j1Jumping,p1.getPosX(),p1.getPosY());
+			jump = false;
 			
 		
         }
@@ -566,6 +568,7 @@ public class Main extends PApplet implements onMessageListener {
 
 			posX = coordenada2.getX();
 			dir2 = coordenada2.isDir();
+			
 
 
 		}
