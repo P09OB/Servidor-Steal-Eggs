@@ -17,8 +17,8 @@ public class Game {
 	public Game() {
 		e = new Egg(500, 10);
 		eggThread = new EggThread(e);
-		player1 = new Player(50, 450,e);
-		player2 = new Player(870, 450,e);
+		player1 = new Player(50, 450,e,1);
+		player2 = new Player(870, 450,e,2);
 		thread1 = new PlayerThread(player1);
 		thread2 = new PlayerThread(player2);
 	}

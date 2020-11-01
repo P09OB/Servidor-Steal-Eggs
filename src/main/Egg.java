@@ -54,9 +54,17 @@ public class Egg {
 	}
 	
 	public boolean isInBasket() {
-		if((posX>=0 && posX<=50)&&(posY>=150 && posY<=250) || (posX>=950 && posX<=1000)&&(posY>=150 && posY<=250)) {
-			return true;
+		if(p.getNumPlayer() == 1) {
+			if((posX>=950 && posX<=1000)&&(posY>=150 && posY<=250)) {
+				return true;
+			}
 		}
+		else {
+			if((posX>=0 && posX<=50)&&(posY>=150 && posY<=250)) {
+				return true;
+			}
+		}
+		
 		return false;
 	}
 	

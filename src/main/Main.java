@@ -53,7 +53,7 @@ public class Main extends PApplet implements onMessageListener {
 	}
 
 	public void setup() {
-		pantalla = 3;
+		pantalla = 1;
 		
 
 		// IMAGENES
@@ -232,7 +232,6 @@ public class Main extends PApplet implements onMessageListener {
 			fill(255);
 			textSize(40);
 			
-			ganador = 1;
 			
 			// IMAGEN DEL GANADOR
 
@@ -480,7 +479,6 @@ public class Main extends PApplet implements onMessageListener {
 			image(j1Jumping, p1.getPosX(), p1.getPosY());
 
 			dirLeft = true;
-			jump = false;
 
 		}
 
@@ -512,7 +510,6 @@ public class Main extends PApplet implements onMessageListener {
 			image(j2jumping, p2.getPosX(), p2.getPosY());
 
 			dirLeft2 = true;
-			jump2 = false;
 
 		}
 

@@ -33,8 +33,8 @@ public class EggThread extends Thread{
 			}
 			else if(egg.isMoving()){
 				if(egg.getP()!=null) {
-					egg.setPosX(egg.getP().getPosX()+40);
-					egg.setPosY(egg.getP().getPosY()+20);
+					egg.setPosX(egg.getP().getPosX()+45);
+					egg.setPosY(egg.getP().getPosY()+30);
 				}
 			}
 			else if(egg.isFlying()) {

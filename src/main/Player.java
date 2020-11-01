@@ -19,13 +19,15 @@ public class Player {
 	private boolean holding;
 	private boolean steal;
 	private int score;
+	private int numPlayer;
 	
-	public Player(int posX, int posY, Egg e) {
+	public Player(int posX, int posY, Egg e, int numPlayer) {
 		this.posX = posX;
 		this.posY = posY;
 		this.alive = true;
 		this.setDir(RIGHT);
 		this.e = e;
+		this.numPlayer = numPlayer;
 	}
 
 	public int getPosX() {
@@ -129,6 +131,14 @@ public class Player {
 
 	public void setScore(int score) {
 		this.score = score;
+	}
+
+	public int getNumPlayer() {
+		return numPlayer;
+	}
+
+	public void setNumPlayer(int numPlayer) {
+		this.numPlayer = numPlayer;
 	}
 	
 	
