@@ -9,6 +9,7 @@ import com.google.gson.Gson;
 
 import model.Coordenadas;
 import model.GameState;
+import model.Restart;
 import processing.core.PApplet;
 import processing.core.PImage;
 
@@ -18,23 +19,25 @@ public class Main extends PApplet implements onMessageListener {
 
 	PImage intro, instrucciones, instru2, instru3, instru4, botonJugar2, botonSigui, botonJugar, botonInstru,
 			botonAtras, escenario, conectarimg, perfil1, perfil2, botonJugar3, ganadorImg, intentarImg, salirImg,
-			perfilG1, perfilG2, empateImg, homeImg, j1left, j1right, j1Jumping, j2left,j2right,j2jumping,egg, huevoArbol;
+			perfilG1, perfilG2, empateImg, homeImg, j1left, j1right, j1Jumping, j2left, j2right, j2jumping, egg,
+			huevoArbol;
 
 	private TcpSingleton tcp;
 	private TCPSingleton2 tcp2;
 	private InetAddress inetAddress;
 	private Coordenadas coordenada;
 	private int pantalla, next, ganador;
-	
+
 	private String ip;
 	private String codigo;
-	
+
 	private int posx, posX = 870;
-	
+
 	int startTime;
 	int time = 60;
-	
-	private boolean dirLeft = false, dirRight = true, dirLeft2 = true, dirRight2 = false, dir2 = false, jump = false, jump2 = false, steal= false, steal2= false, finish = false;
+
+	private boolean dirLeft = false, dirRight = true, dirLeft2 = true, dirRight2 = false, dir2 = false, jump = false,
+			jump2 = false, steal = false, steal2 = false, finish = false, terminar = false;
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
@@ -50,18 +53,21 @@ public class Main extends PApplet implements onMessageListener {
 	}
 
 	public void setup() {
+		pantalla = 3;
 		
+
+		// IMAGENES
 		cargarImagenes();
 
 		game = new Game();
+		
+		// TCP
 
 		tcp = TcpSingleton.getInstance();
 		tcp.setObservador(this);
 
 		tcp2 = TCPSingleton2.getInstance();
 		tcp2.setObservador(this);
-
-		
 
 		// OBTENER EL IP
 
@@ -79,12 +85,12 @@ public class Main extends PApplet implements onMessageListener {
 		String[] parts = ip.split("\\.");
 
 		codigo = parts[3];
-		
-		// TIEMPO
 
-				if (pantalla == 2) {
-					startTime = millis();
-				}
+		// TIEMPO EMPIEZA
+
+		if (pantalla == 2) {
+			startTime = millis();
+		}
 
 	}
 
@@ -110,7 +116,10 @@ public class Main extends PApplet implements onMessageListener {
 		case 1:
 
 			image(conectarimg, 0, 0);
-
+			textSize(20);
+			fill(255);
+			
+			// IMAGENES CONEXION
 			if (tcp.getJug1() == true) {
 
 				image(perfil1, 270, 286);
@@ -135,8 +144,10 @@ public class Main extends PApplet implements onMessageListener {
 
 			zonaVolver();
 
-			textSize(20);
-			text("" + codigo, 486, 182);
+			text("Ingresa este código en tu dispositivo móvil", 380, 80);
+			fill(0);
+			textSize(30);
+			text("" + codigo, 560, 190);
 
 			break;
 
@@ -168,92 +179,90 @@ public class Main extends PApplet implements onMessageListener {
 					finish = true;
 				}
 			}
-			
 
 			fill(0);
 			text("" + time, 288, 41);
-			
+
 			// ENVIA ESTADO DEL JUEGO
 
 			Gson gson = new Gson();
 			String id = UUID.randomUUID().toString();
-			GameState gameState = new GameState(game.getPlayer1().getScore(), game.getPlayer2().getScore(), time,finish, id);
+			GameState gameState = new GameState(game.getPlayer1().getScore(), game.getPlayer2().getScore(), time,
+					finish, id);
 			String json = gson.toJson(gameState);
 
 			tcp.enviar(json);
 			tcp2.enviar(json);
-			
-			
+
 			// PINTAR ELEMENTOS
 
-			//drawBaskets();
 			drawPlayers();
 			drawEgg();
 			drawScores();
 			
+			// PINTAR HUEVOS OBTENIDOS
+
 			int score1 = game.getPlayer1().getScore();
 			int score2 = game.getPlayer2().getScore();
-			
-			for(int i = 0; i < score1; i++) {
+
+			for (int i = 0; i < score1; i++) {
+
+				int x = 57+ i * 10;
 				
-				int x = 57*i+2;
-				image(huevoArbol, x,234);
-				
+				image(huevoArbol, x, 234);
+
 			}
-			
-            for(int i = 0; i < score2; i++) {
-				
-				int x = 950*i+2;
-				image(huevoArbol, x,234);
-				
+
+			for (int i = 0; i < score2; i++) {
+
+				int x = 1042 + i * 10;
+				image(huevoArbol, x, 234);
+
 			}
 
 			break;
-			
-			
+
 		// PANTALLA GANADOR
 		case 3:
-			
-			drawScores();
-			
-			image(ganadorImg, 0, 0);
 
-			switch(ganador) {
+			drawScores();
+
+			image(ganadorImg, 0, 0);
 			
+			fill(255);
+			textSize(40);
+			
+			ganador = 1;
+			
+			// IMAGEN DEL GANADOR
+
+			switch (ganador) {
+
 			case 0:
-				
+
 				image(empateImg, 0, 0);
-				
+
 				break;
-				
-				
+
 			case 1:
-				
+				text("GANADOR JUGADOR 1", 368, 80);
+
 				image(perfilG1, 449, 169);
-				
+
 				break;
-				
-				
+
 			case 2:
 				
+				text("GANADOR JUGADOR 2", 368, 80);
+
 				image(perfilG2, 449, 169);
-				
-				
+
 				break;
-			
+
 			}
 
-			
-
-			if ((mouseX >= 1090 && mouseX <= 1153) && (mouseY >= 20 && mouseY <= 92)) {
-				image(homeImg, 1090, 20);
-			}
-			if ((mouseX >= 320 && mouseX <= 579) && (mouseY >= 580 && mouseY <= 642)) {
-				image(intentarImg, 320, 580);
-			}
-
-			if ((mouseX >= 610 && mouseX <= 871) && (mouseY >= 580 && mouseY <= 642)) {
-				image(salirImg, 610, 580);
+			if ((mouseX >= 472 && mouseX <= 734) && (mouseY >= 580 && mouseY <= 642)) {
+				image(salirImg, 472, 580);
 			}
 
 			break;
@@ -314,7 +323,7 @@ public class Main extends PApplet implements onMessageListener {
 
 		fill(0);
 
-		text("X:" + mouseX + "Y:" + mouseY, mouseX, mouseY);
+		//text("X:" + mouseX + "Y:" + mouseY, mouseX, mouseY);
 
 	}
 
@@ -372,20 +381,10 @@ public class Main extends PApplet implements onMessageListener {
 		// ZONAS SENSIBLE GANADOR
 		case 3:
 
-			// Estas zonas tienen que reinicar el juego
+			// SALIR DEL JUEGO
+			
 
-			if ((mouseX >= 1090 && mouseX <= 1153) && (mouseY >= 20 && mouseY <= 92)) {
-				pantalla = 0;
-				resetGame();
-
-			}
-			if ((mouseX >= 320 && mouseX <= 579) && (mouseY >= 580 && mouseY <= 642)) {
-				pantalla = 1;
-				resetGame();
-				
-			}
-
-			if ((mouseX >= 610 && mouseX <= 871) && (mouseY >= 580 && mouseY <= 642)) {
+			if ((mouseX >= 472 && mouseX <= 734) && (mouseY >= 580 && mouseY <= 642)) {
 				exit();
 			}
 
@@ -451,8 +450,6 @@ public class Main extends PApplet implements onMessageListener {
 
 	}
 
-
-
 	public void zonaVolver() {
 
 		if ((mouseX >= 31 && mouseX <= 101) && (mouseY >= 19 && mouseY <= 68)) {
@@ -462,127 +459,115 @@ public class Main extends PApplet implements onMessageListener {
 
 	}
 
-	/*public void drawBaskets() {
-		fill(0, 255, 0);
-		rect(0, 200, 50, 500);
-		rect(950, 200, 50, 500);
-	}*/
 
 	public void drawPlayers() {
-		
-		
+
 		Player p1 = game.getPlayer1();
 		Player p2 = game.getPlayer2();
 
 		p1.setPosX(posx);
 
 		p2.setPosX(posX);
-		
-		//JUGADOR 1
-		
-         if(jump == true) {
-        	
-        	dirRight = false;
-        	dirLeft = false;
+
+		// JUGADOR 1
+
+		if (jump == true) {
+
+			dirRight = false;
+			dirLeft = false;
 
 			game.getPlayer1().setJumping(true);
-			image(j1Jumping,p1.getPosX(),p1.getPosY());
-		
+			image(j1Jumping, p1.getPosX(), p1.getPosY());
+
 			dirLeft = true;
 			jump = false;
-			
-				
-        }
 
-		
-		if(dirRight == true) {
-			game.getPlayer1().setDir(Player.RIGHT);
-			image(j1right,p1.getPosX(),p1.getPosY());
-			
-		} if(dirLeft == true) {
-			game.getPlayer1().setDir(Player.LEFT);
-			image(j1left,p1.getPosX(),p1.getPosY());
-			
 		}
-		
-        
-        
-        
-         if(steal == true) {
-        	 
-        	 game.getPlayer1().setSteal(true);
-        	 
-        	 steal = false;
-         }
-         
-       //JUGADOR 2
-         
-         if(jump2 == true) {
-         	
-         	dirRight2 = false;
-         	dirLeft2 = false;
 
- 			game.getPlayer2().setJumping(true);
- 			image(j2jumping,p2.getPosX(),p2.getPosY());
- 		
- 			dirLeft2 = true;
- 			jump2 = false;
- 			
- 				
-         }
-         
-         if(dirRight2 == true) {
- 			
- 			dirLeft2 = false;
- 			game.getPlayer2().setDir(Player.RIGHT);
- 			image(j2right,p2.getPosX(),p2.getPosY());
- 			
- 		} if(dirLeft2 == true) {
- 			
- 			dirRight2 = false;
- 			game.getPlayer2().setDir(Player.LEFT);
- 			image(j2left,p2.getPosX(),p2.getPosY());
- 			
- 			
- 		}
+		if (dirRight == true) {
+			game.getPlayer1().setDir(Player.RIGHT);
+			image(j1right, p1.getPosX(), p1.getPosY());
 
-         
-          if(steal2 == true) {
-         	 
-         	 game.getPlayer2().setSteal(true);
-         	 
-         	 steal2 = false;
-          }
-     
+		}
+		if (dirLeft == true) {
+			game.getPlayer1().setDir(Player.LEFT);
+			image(j1left, p1.getPosX(), p1.getPosY());
+
+		}
+
+		if (steal == true) {
+
+			game.getPlayer1().setSteal(true);
+
+		}
+
+		// JUGADOR 2
+
+		if (jump2 == true) {
+
+			dirRight2 = false;
+			dirLeft2 = false;
+
+			game.getPlayer2().setJumping(true);
+			image(j2jumping, p2.getPosX(), p2.getPosY());
+
+			dirLeft2 = true;
+			jump2 = false;
+
+		}
+
+		if (dirRight2 == true) {
+
+			dirLeft2 = false;
+			game.getPlayer2().setDir(Player.RIGHT);
+			image(j2right, p2.getPosX(), p2.getPosY());
+
+		}
+		if (dirLeft2 == true) {
+
+			dirRight2 = false;
+			game.getPlayer2().setDir(Player.LEFT);
+			image(j2left, p2.getPosX(), p2.getPosY());
+
+		}
+
+		if (steal2 == true) {
+
+			game.getPlayer2().setSteal(true);
+
+			steal2 = false;
+		}
 
 	}
 
 	public void drawScores() {
-		
+
 		textSize(20);
 		fill(0);
 		text(game.getPlayer1().getScore(), 959, 41);
 		text(game.getPlayer2().getScore(), 1081, 41);
-		
-		if(pantalla == 3) {
-			
+
+		if (pantalla == 3) {
+
 			text(game.getPlayer1().getScore(), 959, 41);
 			text(game.getPlayer2().getScore(), 1081, 41);
 
-		if(game.getPlayer1().getScore() > game.getPlayer2().getScore()) {
-			
-			ganador = 1;
-			
-		} if(game.getPlayer1().getScore() == game.getPlayer2().getScore()) {
-			
-			ganador = 0;
-			
-		} if(game.getPlayer1().getScore() < game.getPlayer2().getScore()) {
-			
-			ganador = 2;
-			
-		}
-		
+			if (game.getPlayer1().getScore() > game.getPlayer2().getScore()) {
+
+				ganador = 1;
+
+			}
+			if (game.getPlayer1().getScore() == game.getPlayer2().getScore()) {
+
+				ganador = 0;
+
+			}
+			if (game.getPlayer1().getScore() < game.getPlayer2().getScore()) {
+
+				ganador = 2;
+
+			}
+
 		}
 
 	}
@@ -590,26 +575,26 @@ public class Main extends PApplet implements onMessageListener {
 	public void drawEgg() {
 		fill(0);
 		Egg e = game.getE();
-		image(egg,e.getPosX(), e.getPosY());
+		image(egg, e.getPosX(), e.getPosY());
 	}
-
 
 	public void resetGame() {
 		pantalla = 2;
 		time = 60;
 		posX = 870;
-		posx=0;
+		posx = 0;
+		finish = false;
 		game.getPlayer1().setScore(0);
 		game.getPlayer2().setScore(0);
-   	    game.getPlayer1().setSteal(false);
-   	    game.getPlayer2().setSteal(false);
+		game.getPlayer1().setSteal(false);
+		game.getPlayer2().setSteal(false);
+		game.getPlayer1().setJumping(false);
+		game.getPlayer2().setJumping(false);
 
 
-
-		
 	}
-	
-	//MENSAJES JUGADOR 1
+
+	// MENSAJES JUGADOR 1
 
 	@Override
 	public void recibirMensaje1(String mensaje) {
@@ -619,24 +604,28 @@ public class Main extends PApplet implements onMessageListener {
 
 			Gson gson = new Gson();
 			Coordenadas coordenada = gson.fromJson(mensaje, Coordenadas.class);
-			
 
 			posx = coordenada.getX();
 			dirLeft = coordenada.isDirLeft();
 			dirRight = coordenada.isDirRight();
 			jump = coordenada.isJump();
 			steal = coordenada.isSteal();
-			
-			
-			if(mensaje.equals("terminar")){
-				resetGame();
-			}
-	
 
 		}
+
+		if (pantalla == 3) {
+			Gson gson = new Gson();
+			Restart restart = gson.fromJson(mensaje, Restart.class);
+
+			terminar = restart.isFinish();
+
+			if (terminar == true) {
+				resetGame();
+			}
+		}
 	}
-	
-	//MENSAJES JUGADOR 2
+
+	// MENSAJES JUGADOR 2
 
 	@Override
 	public void recibirMensaje2(String mensaje) {
@@ -648,20 +637,27 @@ public class Main extends PApplet implements onMessageListener {
 			Coordenadas coordenada2 = gson.fromJson(mensaje, Coordenadas.class);
 
 			posX = coordenada2.getX();
-            dirLeft2 = coordenada2.isDirLeft();
+			dirLeft2 = coordenada2.isDirLeft();
 			dirRight2 = coordenada2.isDirRight();
 			jump2 = coordenada2.isJump();
 			steal2 = coordenada2.isSteal();
 
-
 		}
-		
-		if(mensaje.equals("terminar")){
-			resetGame();
+
+		if (pantalla == 3) {
+
+			Gson gson = new Gson();
+			Restart restart = gson.fromJson(mensaje, Restart.class);
+
+			terminar = restart.isFinish();
+
+			if (terminar == true) {
+				resetGame();
+			}
 		}
 
 	}
-	
+
 	public void cargarImagenes() {
 
 		intro = loadImage("img/inicio.jpg");
@@ -679,12 +675,13 @@ public class Main extends PApplet implements onMessageListener {
 		perfil1 = loadImage("img/perfilpng.png");
 		perfil2 = loadImage("img/perfil2.png");
 		botonJugar3 = loadImage("img/botonJugar2.png");
-		ganadorImg = loadImage("img/PantallaGanador.jpg");
+		ganadorImg = loadImage("img/PantallaFinal.png");
+
 		intentarImg = loadImage("img/tryAgainButton.png");
 		salirImg = loadImage("img/exitButton.png");
 		perfilG1 = loadImage("img/perfilGrande.png");
 		perfilG2 = loadImage("img/perfilGrande2.png");
-		empateImg = loadImage("img/empate.jpg");
+		empateImg = loadImage("img/empate.png");
 		homeImg = loadImage("img/iconoHome.png");
 		j1left = loadImage("img/J1Left.png");
 		j2left = loadImage("img/J2Left.png");
