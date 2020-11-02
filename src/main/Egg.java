@@ -54,7 +54,7 @@ public class Egg {
 	}
 	
 	public boolean isInBasket() {
-		if(p.getNumPlayer() == 1) {
+		if(p.getNumPlayer() == 2) {
 			if((posX>=950 && posX<=1000)&&(posY>=150 && posY<=250)) {
 				return true;
 			}
@@ -117,6 +117,13 @@ public class Egg {
 
 	public void setLimit() {
 		this.limit = posX;
+	}
+	
+	public boolean outside() {
+		if(posX<0 || posX>1200) {
+			return true;
+		}
+		return false;
 	}
 	
 	

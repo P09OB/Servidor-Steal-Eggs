@@ -51,6 +51,9 @@ public class EggThread extends Thread{
 						}
 						break;
 						}
+					else if(egg.outside()) {
+						egg.respawn();
+					}
 					try {
 						Thread.sleep(15);
 					} catch (InterruptedException e) {
