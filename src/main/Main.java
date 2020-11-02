@@ -485,13 +485,22 @@ public class Main extends PApplet implements onMessageListener {
 
 			game.getPlayer1().setJumping(true);
 			image(j1Jumping, p1.getPosX(), p1.getPosY());
+			jump = false;
 
+		} else {
+			
+			game.getPlayer1().setJumping(false);
+			
 		}
 
 		if (steal == true) {
 
 			game.getPlayer1().setSteal(true);
 
+		} else {
+			
+			game.getPlayer1().setSteal(false);
+			
 		}
 
 		// JUGADOR 2
@@ -515,7 +524,12 @@ public class Main extends PApplet implements onMessageListener {
 
 			game.getPlayer2().setJumping(true);
 			image(j2jumping, p2.getPosX(), p2.getPosY());
+			jump = false;
 
+		} else {
+			
+			game.getPlayer2().setJumping(false);
+			
 		}
 
 
@@ -524,6 +538,10 @@ public class Main extends PApplet implements onMessageListener {
 			game.getPlayer2().setSteal(true);
 
 			steal2 = false;
+		} else {
+			
+			game.getPlayer2().setSteal(false);
+			
 		}
 
 	}
