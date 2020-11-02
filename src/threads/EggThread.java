@@ -34,7 +34,7 @@ public class EggThread extends Thread{
 			else if(egg.isMoving()){
 				if(egg.getP()!=null) {
 					egg.setPosX(egg.getP().getPosX()+45);
-					egg.setPosY(egg.getP().getPosY()+30);
+					egg.setPosY(egg.getP().getPosY()+65);
 				}
 			}
 			else if(egg.isFlying()) {
@@ -53,6 +53,7 @@ public class EggThread extends Thread{
 						}
 					else if(egg.outside()) {
 						egg.respawn();
+						break;
 					}
 					try {
 						Thread.sleep(15);

@@ -6,7 +6,7 @@ public class Player {
 	public final static int GRAVITY = 8;
 	public final static char RIGHT = 'r';
 	public final static char LEFT = 'l';
-	public final static int HEIGHT_LIMIT = 200;
+	public final static int HEIGHT_LIMIT = 165;
 	public final static int JUMP_SPEED = 10;
 	
 	private int posX;
