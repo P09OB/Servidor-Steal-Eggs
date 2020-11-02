@@ -31,7 +31,7 @@ public class Main extends PApplet implements onMessageListener {
 	private String ip;
 	private String codigo;
 
-	private int posx, posX = 870;
+	private int posx, posX = 1074;
 
 	int startTime;
 	int time = 60;
@@ -53,7 +53,6 @@ public class Main extends PApplet implements onMessageListener {
 	}
 
 	public void setup() {
-		pantalla = 1;
 		
 
 		// IMAGENES
@@ -524,7 +523,7 @@ public class Main extends PApplet implements onMessageListener {
 
 			game.getPlayer2().setJumping(true);
 			image(j2jumping, p2.getPosX(), p2.getPosY());
-			jump = false;
+			jump2 = false;
 
 		} else {
 			
