@@ -469,19 +469,7 @@ public class Main extends PApplet implements onMessageListener {
 		p2.setPosX(posX);
 
 		// JUGADOR 1
-
-		if (jump == true) {
-
-			dirRight = false;
-			dirLeft = false;
-
-			game.getPlayer1().setJumping(true);
-			image(j1Jumping, p1.getPosX(), p1.getPosY());
-
-			dirLeft = true;
-
-		}
-
+		
 		if (dirRight == true) {
 			game.getPlayer1().setDir(Player.RIGHT);
 			image(j1right, p1.getPosX(), p1.getPosY());
@@ -493,6 +481,13 @@ public class Main extends PApplet implements onMessageListener {
 
 		}
 
+		if (jump == true) {
+
+			game.getPlayer1().setJumping(true);
+			image(j1Jumping, p1.getPosX(), p1.getPosY());
+
+		}
+
 		if (steal == true) {
 
 			game.getPlayer1().setSteal(true);
@@ -500,19 +495,7 @@ public class Main extends PApplet implements onMessageListener {
 		}
 
 		// JUGADOR 2
-
-		if (jump2 == true) {
-
-			dirRight2 = false;
-			dirLeft2 = false;
-
-			game.getPlayer2().setJumping(true);
-			image(j2jumping, p2.getPosX(), p2.getPosY());
-
-			dirLeft2 = true;
-
-		}
-
+		
 		if (dirRight2 == true) {
 
 			dirLeft2 = false;
@@ -527,6 +510,14 @@ public class Main extends PApplet implements onMessageListener {
 			image(j2left, p2.getPosX(), p2.getPosY());
 
 		}
+
+		if (jump2 == true) {
+
+			game.getPlayer2().setJumping(true);
+			image(j2jumping, p2.getPosX(), p2.getPosY());
+
+		}
+
 
 		if (steal2 == true) {
 
